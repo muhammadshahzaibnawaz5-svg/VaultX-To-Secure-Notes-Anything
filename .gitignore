@@ -30,3 +30,10 @@ build/
 
 # Node.js localStorage
 data/.localstorage
+data/.localstorage-*
+
+# Auto-generated
+next-env.d.ts
+
+# Old project docs
+Project-proposal.md
