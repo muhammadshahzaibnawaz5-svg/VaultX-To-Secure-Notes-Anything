@@ -1,0 +1,231 @@
+@import "tailwindcss";
+
+@theme {
+  --color-vault-dark: #1a1f2e;
+  --color-vault-darker: #0f1219;
+  --color-vault-accent: #6366f1;
+  --color-vault-accent-hover: #4f46e5;
+  --color-vault-success: #10b981;
+  --color-vault-warning: #f59e0b;
+  --color-vault-danger: #ef4444;
+}
+
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  cursor: pointer;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes arrowMove {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(4px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-fade-in-down {
+  animation: fadeInDown 0.8s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.5s ease-out forwards;
+}
+
+.delay-1 {
+  animation-delay: 0.1s;
+  opacity: 0;
+}
+.delay-2 {
+  animation-delay: 0.2s;
+  opacity: 0;
+}
+.delay-3 {
+  animation-delay: 0.3s;
+  opacity: 0;
+}
+.delay-4 {
+  animation-delay: 0.4s;
+  opacity: 0;
+}
+.delay-5 {
+  animation-delay: 0.5s;
+  opacity: 0;
+}
+
+.feature-card {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15);
+}
+
+.feature-card:hover::before {
+  opacity: 1;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.feature-card:hover .feature-title {
+  color: #a5b4fc;
+}
+
+.feature-icon {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+}
+
+.feature-title {
+  transition: color 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #6366f1;
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary:hover {
+  background-color: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover .arrow-icon {
+  animation: arrowMove 0.6s ease-in-out infinite;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.card {
+  background-color: #1a1f2e;
+  border-radius: 0.75rem;
+  border: 1px solid #1f2937;
+  padding: 1.5rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}

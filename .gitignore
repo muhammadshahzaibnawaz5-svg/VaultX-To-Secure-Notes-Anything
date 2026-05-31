@@ -1,0 +1,32 @@
+# Next.js
+.next/
+out/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# Node.js localStorage
+data/.localstorage
