@@ -109,7 +109,7 @@ export async function DELETE(
 
     if (db.vaults[user.id].length < initialLength) {
       if (entryToDelete?.file_path) {
-        const fullPath = path.join(process.cwd(), "public", entryToDelete.file_path);
+        const fullPath = path.join(process.cwd(), "data", "uploads", entryToDelete.file_path);
         try { await fs.unlink(fullPath); } catch {}
       }
       await writeDb(db);

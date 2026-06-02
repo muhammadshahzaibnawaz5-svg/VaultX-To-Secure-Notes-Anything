@@ -24,6 +24,10 @@ function formatDate(dateString: string) {
   });
 }
 
+function lsGet(key: string): string | null {
+  try { return localStorage.getItem(key); } catch { return null; }
+}
+
 function formatFileSize(bytes: number) {
   if (bytes === 0) return "";
   const units = ["B", "KB", "MB", "GB"];
@@ -116,9 +120,7 @@ export default function VaultModal({
                 {entry.file_path && (
                   <div>
                     <a
-                      href={entry.file_path}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      href={`/api/download/${entry.id}?token=${lsGet("vaultx_token") || ""}`}
                       className="flex items-center gap-2 bg-[#6366f1] hover:bg-[#4f46e5] text-white font-medium py-3 px-4 rounded-lg transition-all w-full justify-center"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

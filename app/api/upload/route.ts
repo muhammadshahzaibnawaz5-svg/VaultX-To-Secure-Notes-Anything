@@ -3,7 +3,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { readDb } from "@/lib/db";
 
-const UPLOADS_DIR = path.join(process.cwd(), "public", "uploads");
+const UPLOADS_DIR = path.join(process.cwd(), "data", "uploads");
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 function verifyAuth(request: Request): string | null {
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     const buffer = Buffer.from(bytes);
     await fs.writeFile(filePath, buffer);
 
-    const publicPath = `/uploads/${user.id}/${safeName}`;
+    const relativePath = `${user.id}/${safeName}`;
 
     return NextResponse.json({
       success: true,
@@ -65,7 +65,7 @@ export async function POST(request: Request) {
         file_name: file.name,
         file_size: file.size,
         file_type: file.type,
-        file_path: publicPath,
+        file_path: relativePath,
       },
     });
   } catch {
