@@ -53,7 +53,8 @@ export async function POST(request: Request) {
     const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const filePath = path.join(userDir, safeName);
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const bytes = await file.arrayBuffer();
+    const buffer = Buffer.from(bytes);
     await fs.writeFile(filePath, buffer);
 
     const publicPath = `/uploads/${user.id}/${safeName}`;
