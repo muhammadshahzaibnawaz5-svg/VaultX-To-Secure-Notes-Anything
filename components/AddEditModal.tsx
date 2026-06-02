@@ -72,13 +72,28 @@ export default function AddEditModal({
     const token = lsGet("vaultx_token");
     if (!token) throw new Error("Not authenticated");
 
-    const formData = new FormData();
-    formData.append("file", file);
+    const reader = new FileReader();
+    const base64 = await new Promise<string>((resolve, reject) => {
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(",")[1]);
+      };
+      reader.onerror = () => reject(new Error("Failed to read file"));
+      reader.readAsDataURL(file);
+    });
 
     const res = await fetch("/api/upload", {
       method: "POST",
-      headers: { Authorization: "Bearer " + token },
-      body: formData,
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        data: base64,
+      }),
     });
 
     const data = await res.json();

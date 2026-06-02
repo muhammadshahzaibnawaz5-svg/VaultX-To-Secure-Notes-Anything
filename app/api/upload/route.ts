@@ -31,16 +31,16 @@ export async function POST(request: Request) {
       );
     }
 
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    if (!file) {
+    const body = await request.json();
+    if (!body.name || !body.data) {
       return NextResponse.json(
-        { success: false, error: "No file provided" },
+        { success: false, error: "File name and data are required" },
         { status: 400 }
       );
     }
 
-    if (file.size > MAX_FILE_SIZE) {
+    const fileSize = body.size || 0;
+    if (fileSize > MAX_FILE_SIZE) {
       return NextResponse.json(
         { success: false, error: "File too large. Maximum size is 10MB" },
         { status: 400 }
@@ -50,11 +50,10 @@ export async function POST(request: Request) {
     const userDir = path.join(UPLOADS_DIR, user.id);
     await fs.mkdir(userDir, { recursive: true });
 
-    const safeName = `${Date.now()}_${file.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
+    const safeName = `${Date.now()}_${body.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
     const filePath = path.join(userDir, safeName);
 
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(body.data, "base64");
     await fs.writeFile(filePath, buffer);
 
     const relativePath = `${user.id}/${safeName}`;
@@ -62,9 +61,9 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       file: {
-        file_name: file.name,
-        file_size: file.size,
-        file_type: file.type,
+        file_name: body.name,
+        file_size: fileSize,
+        file_type: body.type || "",
         file_path: relativePath,
       },
     });
