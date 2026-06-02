@@ -65,9 +65,9 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    if (!body.title || !body.content) {
+    if (!body.title) {
       return NextResponse.json(
-        { success: false, error: "Title and content are required" },
+        { success: false, error: "Title is required" },
         { status: 400 }
       );
     }
@@ -76,10 +76,14 @@ export async function POST(request: Request) {
       id: `entry_${Date.now()}`,
       title: body.title,
       category: body.category || "general",
-      content: body.content,
+      content: body.content || "",
       username: body.username || "",
       password: body.password || "",
       url: body.url || "",
+      file_name: body.file_name || "",
+      file_size: body.file_size || 0,
+      file_type: body.file_type || "",
+      file_path: body.file_path || "",
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

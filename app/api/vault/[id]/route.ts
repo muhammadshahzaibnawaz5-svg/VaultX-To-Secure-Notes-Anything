@@ -1,3 +1,5 @@
+import { promises as fs } from "fs";
+import path from "path";
 import { NextResponse } from "next/server";
 import { readDb, writeDb } from "@/lib/db";
 import { VaultEncryptor } from "@/lib/encryption";
@@ -53,6 +55,10 @@ export async function PUT(
       username: body.username ?? existing.username,
       password: body.password ?? existing.password,
       url: body.url ?? existing.url,
+      file_name: body.file_name ?? existing.file_name,
+      file_size: body.file_size ?? existing.file_size,
+      file_type: body.file_type ?? existing.file_type,
+      file_path: body.file_path ?? existing.file_path,
       updated_at: new Date().toISOString(),
     };
 
@@ -97,10 +103,15 @@ export async function DELETE(
     }
 
     const entries = db.vaults[user.id] || [];
+    const entryToDelete = entries.find((e) => e.id === id);
     const initialLength = entries.length;
     db.vaults[user.id] = entries.filter((e) => e.id !== id);
 
     if (db.vaults[user.id].length < initialLength) {
+      if (entryToDelete?.file_path) {
+        const fullPath = path.join(process.cwd(), "public", entryToDelete.file_path);
+        try { await fs.unlink(fullPath); } catch {}
+      }
       await writeDb(db);
       return NextResponse.json({ success: true, message: "Entry deleted" });
     }

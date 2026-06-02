@@ -14,6 +14,10 @@ interface VaultEntry {
   username: string;
   password: string;
   url: string;
+  file_name: string;
+  file_size: number;
+  file_type: string;
+  file_path: string;
   created_at: string;
   updated_at: string;
 }
@@ -49,7 +53,7 @@ async function apiRequest(
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  if (token) headers["Authorization"] = `Bearer ${token}`;
+  if (token) headers["Authorization"] = "Bearer " + token;
 
   const options: RequestInit = { method, headers };
   if (data) options.body = JSON.stringify(data);
@@ -99,7 +103,7 @@ export default function DashboardPage() {
   const handleSave = useCallback(
     async (data: Partial<VaultEntry>) => {
       if (editingEntry) {
-        await apiRequest(`/api/vault/${editingEntry.id}`, "PUT", data);
+        await apiRequest("/api/vault/" + editingEntry.id, "PUT", data);
       } else {
         await apiRequest("/api/vault", "POST", data);
       }
@@ -113,7 +117,7 @@ export default function DashboardPage() {
   const handleDelete = useCallback(
     async (id: string) => {
       if (!confirm("Delete this entry?")) return;
-      await apiRequest(`/api/vault/${id}`, "DELETE");
+      await apiRequest("/api/vault/" + id, "DELETE");
       setSelectedEntry(null);
       setEditingEntry(null);
       await loadEntries();
@@ -162,15 +166,15 @@ export default function DashboardPage() {
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                className={"px-4 py-2 rounded-lg text-sm font-medium transition-all " + (
                   filter === f
                     ? "bg-[#6366f1] text-white"
                     : "bg-[#1a1f2e] text-gray-400 hover:text-white border border-gray-700"
-                }`}
+                )}
               >
                 {f === "all"
                   ? "All"
-                  : `${categoryIcons[f]} ${f.charAt(0).toUpperCase() + f.slice(1)}s`}
+                  : categoryIcons[f] + " " + (f.charAt(0).toUpperCase() + f.slice(1) + "s")}
               </button>
             )
           )}
@@ -190,12 +194,14 @@ export default function DashboardPage() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="text-6xl mb-4">🔐</div>
+            <div className="text-6xl mb-4">{filter === "document" ? "📄" : "🔐"}</div>
             <h3 className="text-xl font-semibold text-white mb-2">
-              Your vault is empty
+              {filter === "document" ? "No documents yet" : "Your vault is empty"}
             </h3>
             <p className="text-gray-400 mb-6">
-              Add your first secure entry to get started
+              {filter === "document"
+                ? "Upload your first document to get started"
+                : "Add your first secure entry to get started"}
             </p>
             <button
               onClick={() => {
@@ -204,7 +210,7 @@ export default function DashboardPage() {
               }}
               className="bg-[#6366f1] hover:bg-[#4f46e5] text-white font-semibold py-3 px-6 rounded-lg transition-all"
             >
-              Add Your First Entry
+              {filter === "document" ? "Upload Document" : "Add Your First Entry"}
             </button>
           </div>
         )}

@@ -8,6 +8,10 @@ interface VaultEntry {
   username: string;
   password: string;
   url: string;
+  file_name: string;
+  file_size: number;
+  file_type: string;
+  file_path: string;
   created_at: string;
   updated_at: string;
 }
@@ -28,6 +32,18 @@ function formatDate(dateString: string) {
   });
 }
 
+function formatFileSize(bytes: number) {
+  if (bytes === 0) return "";
+  const units = ["B", "KB", "MB", "GB"];
+  let i = 0;
+  let size = bytes;
+  while (size >= 1024 && i < units.length - 1) {
+    size /= 1024;
+    i++;
+  }
+  return `${size.toFixed(1)} ${units[i]}`;
+}
+
 function escapeHtml(text: string) {
   return text.replace(/[&<>"']/g, (m) =>
     m === "&" ? "&amp;" : m === "<" ? "&lt;" : m === ">" ? "&gt;" : m === '"' ? "&quot;" : "&#39;"
@@ -44,6 +60,7 @@ export default function VaultCard({
   onDelete: () => void;
 }) {
   const icon = categoryIcons[entry.category] || categoryIcons.general;
+  const isDocument = entry.category === "document";
 
   return (
     <div
@@ -82,24 +99,34 @@ export default function VaultCard({
           </svg>
         </button>
       </div>
-      <p className="text-sm text-gray-400 line-clamp-2">
-        {escapeHtml(entry.content.substring(0, 80))}
-        {entry.content.length > 80 ? "..." : ""}
-      </p>
-      {(entry.username || entry.url) && (
+
+      {isDocument && entry.file_name ? (
+        <div className="flex items-center gap-2 text-sm text-gray-400">
+          <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+          </svg>
+          <span className="truncate">{escapeHtml(entry.file_name)}</span>
+          {entry.file_size > 0 && (
+            <span className="text-xs text-gray-500 shrink-0">{formatFileSize(entry.file_size)}</span>
+          )}
+        </div>
+      ) : (
+        <p className="text-sm text-gray-400 line-clamp-2">
+          {escapeHtml(entry.content.substring(0, 80))}
+          {entry.content.length > 80 ? "..." : ""}
+        </p>
+      )}
+
+      {!isDocument && (entry.username || entry.url) && (
         <div className="mt-3 pt-3 border-t border-gray-700">
           {entry.username && (
             <p className="text-xs text-gray-500">
-              Username:{" "}
-              <span className="text-gray-400">
-                {escapeHtml(entry.username)}
-              </span>
+              Username: <span className="text-gray-400">{escapeHtml(entry.username)}</span>
             </p>
           )}
           {entry.url && (
             <p className="text-xs text-gray-500">
-              URL:{" "}
-              <span className="text-gray-400">{escapeHtml(entry.url)}</span>
+              URL: <span className="text-gray-400">{escapeHtml(entry.url)}</span>
             </p>
           )}
         </div>
