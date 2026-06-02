@@ -119,7 +119,7 @@ export default function VaultModal({
                       onClick={() => {
                         const token = (() => { try { return localStorage.getItem("vaultx_token"); } catch { return null; } })();
                         if (token) {
-                          window.open(`/api/download/${entry.id}?token=${token}`, "_blank");
+                          window.open(`/api/vault/${entry.id}?download=1&token=${token}`, "_blank");
                         }
                       }}
                       className="flex items-center gap-2 bg-[#6366f1] hover:bg-[#4f46e5] text-white font-medium py-3 px-4 rounded-lg transition-all w-full justify-center"
