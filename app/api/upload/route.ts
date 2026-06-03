@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "fs";
-import path from "path";
 import { readDb } from "@/lib/db";
 
-const UPLOADS_DIR = path.join(process.cwd(), "data", "uploads");
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 function verifyAuth(request: Request): string | null {
   const auth = request.headers.get("Authorization");
@@ -47,24 +44,25 @@ export async function POST(request: Request) {
       );
     }
 
-    const userDir = path.join(UPLOADS_DIR, user.id);
-    await fs.mkdir(userDir, { recursive: true });
+    // Validate that body.data is a valid Base64 string
+    if (typeof body.data !== "string" || body.data.trim() === "") {
+      return NextResponse.json(
+        { success: false, error: "Invalid file data" },
+        { status: 400 }
+      );
+    }
 
-    const safeName = `${Date.now()}_${body.name.replace(/[^a-zA-Z0-9._-]/g, "_")}`;
-    const filePath = path.join(userDir, safeName);
-
-    const buffer = Buffer.from(body.data, "base64");
-    await fs.writeFile(filePath, buffer);
-
-    const relativePath = `${user.id}/${safeName}`;
-
+    // Return the validated file metadata + Base64 data back to client.
+    // The client will include this in the vault POST/PUT payload so it gets
+    // stored in vault_db.json — no filesystem writes needed, works on Railway.
     return NextResponse.json({
       success: true,
       file: {
         file_name: body.name,
         file_size: fileSize,
-        file_type: body.type || "",
-        file_path: relativePath,
+        file_type: body.type || "application/octet-stream",
+        file_path: "",   // no longer used, kept for schema compatibility
+        file_data: body.data, // Base64 content stored in DB
       },
     });
   } catch {

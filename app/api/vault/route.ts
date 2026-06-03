@@ -84,6 +84,7 @@ export async function POST(request: Request) {
       file_size: body.file_size || 0,
       file_type: body.file_type || "",
       file_path: body.file_path || "",
+      file_data: body.file_data || "", // Base64 file content – stored in DB
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };

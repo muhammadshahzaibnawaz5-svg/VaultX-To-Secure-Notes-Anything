@@ -14,6 +14,7 @@ interface VaultEntry {
   file_size: number;
   file_type: string;
   file_path: string;
+  file_data: string;
   created_at: string;
   updated_at: string;
 }

@@ -28,9 +28,17 @@ npm-debug.log*
 dist/
 build/
 
-# Node.js localStorage
+# Node.js localStorage (legacy, no longer used)
 data/.localstorage
 data/.localstorage-*
+
+# Uploaded binary files (files are now stored as Base64 in vault_db.json)
+# Keep .gitkeep so the uploads folder exists, but ignore any actual files
+data/uploads/*
+!data/uploads/.gitkeep
+
+# vault_db.json MUST be committed so Railway has an initial DB on first deploy
+# (Do NOT add data/vault_db.json to this file)
 
 # Auto-generated
 next-env.d.ts

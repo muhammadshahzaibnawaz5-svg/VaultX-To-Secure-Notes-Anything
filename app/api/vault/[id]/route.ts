@@ -1,5 +1,3 @@
-import { promises as fs } from "fs";
-import path from "path";
 import { NextResponse } from "next/server";
 import { readDb, writeDb } from "@/lib/db";
 import { VaultEncryptor } from "@/lib/encryption";
@@ -49,9 +47,9 @@ export async function GET(
 
     const decrypted = encryptor.decryptEntry(entry);
 
-    if (download === "1" && decrypted.file_path) {
-      const filePath = path.join(process.cwd(), "data", "uploads", decrypted.file_path);
-      const fileBuffer = await fs.readFile(filePath);
+    if (download === "1" && decrypted.file_data) {
+      // Decode Base64 stored in DB — no filesystem access needed
+      const fileBuffer = Buffer.from(decrypted.file_data, "base64");
       const fileName = decrypted.file_name || "download";
       const fileType = decrypted.file_type || "application/octet-stream";
       return new NextResponse(fileBuffer, {
@@ -119,6 +117,7 @@ export async function PUT(
       file_size: body.file_size ?? existing.file_size,
       file_type: body.file_type ?? existing.file_type,
       file_path: body.file_path ?? existing.file_path,
+      file_data: body.file_data ?? existing.file_data, // preserve or replace Base64
       updated_at: new Date().toISOString(),
     };
 
@@ -163,15 +162,11 @@ export async function DELETE(
     }
 
     const entries = db.vaults[user.id] || [];
-    const entryToDelete = entries.find((e) => e.id === id);
     const initialLength = entries.length;
     db.vaults[user.id] = entries.filter((e) => e.id !== id);
+    // file_data was stored in DB — no disk file to clean up
 
     if (db.vaults[user.id].length < initialLength) {
-      if (entryToDelete?.file_path) {
-        const fullPath = path.join(process.cwd(), "data", "uploads", entryToDelete.file_path);
-        try { await fs.unlink(fullPath); } catch {}
-      }
       await writeDb(db);
       return NextResponse.json({ success: true, message: "Entry deleted" });
     }

@@ -44,7 +44,7 @@ class VaultEncryptor {
 
   encryptEntry<T>(entry: T): T {
     const encrypted = { ...entry } as Record<string, unknown>;
-    const fields = ["title", "content", "category", "username", "password", "url", "file_name", "file_type", "file_path"] as const;
+    const fields = ["title", "content", "category", "username", "password", "url", "file_name", "file_type", "file_path", "file_data"] as const;
     for (const field of fields) {
       if (typeof encrypted[field] === "string") {
         encrypted[field] = this.encryptData(encrypted[field] as string);
@@ -55,7 +55,7 @@ class VaultEncryptor {
 
   decryptEntry<T>(entry: T): T {
     const decrypted = { ...entry } as Record<string, unknown>;
-    const fields = ["title", "content", "category", "username", "password", "url", "file_name", "file_type", "file_path"] as const;
+    const fields = ["title", "content", "category", "username", "password", "url", "file_name", "file_type", "file_path", "file_data"] as const;
     for (const field of fields) {
       if (typeof decrypted[field] === "string") {
         decrypted[field] = this.decryptData(decrypted[field] as string);

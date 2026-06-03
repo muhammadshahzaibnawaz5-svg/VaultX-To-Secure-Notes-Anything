@@ -24,6 +24,7 @@ interface VaultEntry {
   file_size: number;
   file_type: string;
   file_path: string;
+  file_data: string; // Base64-encoded file content stored in DB (no filesystem needed)
   created_at: string;
   updated_at: string;
 }
