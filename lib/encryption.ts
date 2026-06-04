@@ -43,25 +43,27 @@ class VaultEncryptor {
   }
 
   encryptEntry<T>(entry: T): T {
-    const encrypted = { ...entry } as Record<string, unknown>;
-    const fields = ["title", "content", "category", "username", "password", "url", "file_name", "file_type", "file_path", "file_data"] as const;
-    for (const field of fields) {
-      if (typeof encrypted[field] === "string") {
-        encrypted[field] = this.encryptData(encrypted[field] as string);
+    if (entry && typeof entry === "object") {
+      const e = entry as Record<string, unknown>;
+      for (const field of ["title", "content", "username", "password", "url"] as const) {
+        if (typeof e[field] === "string") {
+          e[field] = this.encryptData(e[field] as string);
+        }
       }
     }
-    return encrypted as T;
+    return entry;
   }
 
   decryptEntry<T>(entry: T): T {
-    const decrypted = { ...entry } as Record<string, unknown>;
-    const fields = ["title", "content", "category", "username", "password", "url", "file_name", "file_type", "file_path", "file_data"] as const;
-    for (const field of fields) {
-      if (typeof decrypted[field] === "string") {
-        decrypted[field] = this.decryptData(decrypted[field] as string);
+    if (entry && typeof entry === "object") {
+      const e = entry as Record<string, unknown>;
+      for (const field of ["title", "content", "username", "password", "url"] as const) {
+        if (typeof e[field] === "string") {
+          e[field] = this.decryptData(e[field] as string);
+        }
       }
     }
-    return decrypted as T;
+    return entry;
   }
 }
 
